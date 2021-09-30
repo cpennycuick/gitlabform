@@ -3,16 +3,16 @@ from logging import debug
 from gitlabform.configuration.core import ConfigurationCore
 
 
-class ConfigurationGroups(ConfigurationCore):
-    def __init__(self, config_path=None, config_string=None):
-        super().__init__(config_path, config_string)
+class ConfigurationGroups():
+    def __init__(self, config: ConfigurationCore):
+        self.config = config
 
     def get_groups(self) -> list:
         """
         :return: sorted list of groups that are EXPLICITLY defined in the config
         """
         groups = []
-        projects_and_groups = self.get("projects_and_groups")
+        projects_and_groups = self.config.get("projects_and_groups")
         for element in projects_and_groups.keys():
             if element.endswith("/*"):
                 # cut off that "/*"
@@ -26,18 +26,18 @@ class ConfigurationGroups(ConfigurationCore):
         :return: merged configuration for this group, from common, group. Merging is additive.
         """
 
-        common_config = self.get_common_config()
+        common_config = self.config.get_common_config()
         debug("Common config: %s" % common_config)
 
-        group_config = self.get_group_config(group)
+        group_config = self.config.get_group_config(group)
         debug("Group config: %s" % group_config)
 
         if not group_config and not common_config:
             return {}
 
-        return self.merge_configs(common_config, group_config)
+        return self.config.merge_configs(common_config, group_config)
 
-    def get_effective_subgroup_config(self, subgroup):
+    def get_effective_subgroup_config(self, subgroup) -> dict:
 
         #
         # Goes through a subgroups hierarchy, from top to bottom
@@ -59,17 +59,17 @@ class ConfigurationGroups(ConfigurationCore):
         last_element = None
         for element in elements:
             if not last_element:
-                effective_config = self.get_group_config(element)
+                effective_config = self.config.get_group_config(element)
                 debug("First level config for '%s': %s" % (element, effective_config))
                 last_element = element
             else:
                 next_level_subgroup = last_element + "/" + element
-                next_level_subgroup_config = self.get_group_config(next_level_subgroup)
+                next_level_subgroup_config = self.config.get_group_config(next_level_subgroup)
                 debug(
                     "Config for '%s': %s"
                     % (next_level_subgroup, next_level_subgroup_config)
                 )
-                effective_config = self.merge_configs(
+                effective_config = self.config.merge_configs(
                     effective_config, next_level_subgroup_config
                 )
                 debug(

@@ -8,7 +8,7 @@ def test__config_with_different_case_group():
     group_name_with_varying_case = "GROUPnameWITHvaryingCASE"
     config_yaml = f"""
     projects_and_groups:
-      {group_name_with_varying_case}/*: 
+      {group_name_with_varying_case}/*:
         project_settings:
           visibility: internal
     """
@@ -29,7 +29,7 @@ def test__config_with_different_case_project():
     )
     config_yaml = f"""
     projects_and_groups:
-      {group_and_project_name_with_varying_case}: 
+      {group_and_project_name_with_varying_case}:
         project_settings:
           visibility: public
     """
@@ -52,7 +52,7 @@ def test__config_with_different_case_duplicate_groups():
       groupnamewithvaryingcase/*:
         project_settings:
           visibility: internal
-      GROUPnameWITHvaryingCASE/*: # different case than defined above 
+      GROUPnameWITHvaryingCASE/*: # different case than defined above
         project_settings:
           visibility: public
     """
